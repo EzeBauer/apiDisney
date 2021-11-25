@@ -17,7 +17,35 @@ module.exports = {
       });
   },
   detail: (req, res) => {
-    db.Genre.findByPk(req.params.id, {
+      try {
+        db.Genre.findByPk(+req.params.id, {
+          include: [{ association: "movies" }],
+          attributes: ["id", "name", ["imagen", "image"]],
+        })
+          .then((data) => {
+            let respuesta = {
+              status: 200,
+              /* url: getURLBase(req) + `detail/${data.id}`, */
+              data: data,
+            };
+            res.status(200).json(respuesta);
+          })
+          .catch((e) => {
+            let errorBD = {
+              status: 404,
+              msg: "Recurso no encontrado",
+            };
+            res.status(404).json(errorBD);
+          });
+      } catch (error) {
+        let errorBD = {
+          status: 500,
+          msg: "Problema interno del servidor",
+        };
+        res.status(404).json(errorBD);
+      }
+
+    /* db.Genre.findByPk(req.params.id, {
       include: [{ association: "movies" }],
       attributes: ["id", "name", ["imagen", "image"]],
     })
@@ -42,7 +70,7 @@ module.exports = {
       .catch((err) => {
         console.log(err);
         return res.status(500).json(err);
-      });
+      }); */
   },
   create: (req, res) => {
     const errors = validationResult(req);
@@ -71,7 +99,7 @@ module.exports = {
     }
   },
 
-  update: (req, res) => {
+  update:  (req, res) => {
     const errors = validationResult(req);
 
     if (errors.isEmpty()) {
