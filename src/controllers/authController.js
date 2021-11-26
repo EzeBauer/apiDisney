@@ -1,4 +1,5 @@
 const db = require('../database/models');
+require("dotenv").config();
 const sgMail = require("@sendgrid/mail");
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
@@ -90,8 +91,8 @@ module.exports = {
           token
         });
       } catch (error) {
-        console.log(err);
-        return res.status(500).json(err);
+        console.log(error);
+        return res.status(500).json(error);
       }
     } else {
       return res.status(400).json({
