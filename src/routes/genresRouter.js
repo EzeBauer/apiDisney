@@ -12,9 +12,9 @@ router.get("/", genresController.list);
 
 router.get("/:id", genresController.detail);
 
-router.post("/",upload.single("imagen"),genresValidator,genresController.create);
+router.post("/",upload.single("image"),genresValidator,genresController.create);
 
-router.put("/:id",upload.single("imagen"), genresValidator,genresController.update);
+router.put("/:id",upload.single("image"), genresValidator,genresController.update);
 
 router.delete("/:id", genresController.delete);
 

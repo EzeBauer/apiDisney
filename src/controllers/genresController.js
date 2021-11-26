@@ -20,7 +20,7 @@ module.exports = {
       try {
         db.Genre.findByPk(+req.params.id, {
           include: [{ association: "movies" }],
-          attributes: ["id", "name", ["imagen", "image"]],
+          attributes: ["id", "name", "image"],
         })
           .then((data) => {
             let respuesta = {
@@ -78,7 +78,7 @@ module.exports = {
     if (errors.isEmpty()) {
       db.Genre.create({
         name: req.body.name,
-        imagen: req.file ? req.file.filename : "defaultGenre.png",
+        image: req.file ? req.file.filename : null,
       })
         .then(() => {
           res.status(201).json({
@@ -108,7 +108,7 @@ module.exports = {
           db.Genre.update(
             {
               name: req.body ? req.body.name : genre.name,
-              imagen: req.file ? req.file.filename : genre.image,
+              image: req.file ? req.file.filename : genre.image,
             },
             { where: { id: req.params.id } }
           )
