@@ -1,16 +1,11 @@
 const db = require('../database/models');
+const sgMail = require("@sendgrid/mail");
 const { validationResult } = require('express-validator');
 const bcrypt = require('bcryptjs');
 const jwt = require('jsonwebtoken');
-const nodemailer = require('nodemailer');
-const sendGridTransport = require('nodemailer-sendgrid-transport');
-const { SENDGRID_API } = require('../config/key');
 
-const transporter = nodemailer.createTransport(
-  sendGridTransport({
-    auth: { api_key: SENDGRID_API }
-  })
-);
+
+
 
 module.exports = {
   register: async (req, res) => {
@@ -18,22 +13,47 @@ module.exports = {
     try {
       if (errors.isEmpty()) {
         const user = await db.User.create({
-          name: req.body.name,
           email: req.body.email,
           password: bcrypt.hashSync(req.body.password)
         });
+        console.log(user);
 
-        transporter.sendMail({
-          to: user.email,
-          from: 'alexis10893123@hotmail.com',
-          subject: 'holis',
-          html: `<h3>Email de bienvenida</h3>
-              <p>Bienvenido ${user.name}</p>`
+       
+
+        //Generar token
+        //datos de usuario
+        const userToken={
+          id:user.id,
+          email:user.email,
+        }
+        //Firma digital
+        const token = jwt.sign(userToken, process.env.SECRETKEY, { //PALABRA SECRETA GUARDAD EN VARIABLE DE ENTORNO
+          expiresIn: "10h",
         });
+        //Fin generar token
+
+        
+        sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+        const msg = {
+          to: user.email, // Change to your recipient
+          from: "bauereze@gmail.com", // Change to your verified sender
+          subject: "Bienvenido a la apiDIsney",
+          text: "",
+          html: "<strong>and easy to do anywhere, even with Node.js</strong>",
+        };
+        sgMail
+          .send(msg)
+          .then(() => {
+            console.log("Email sent");
+          })
+          .catch((error) => {
+            console.error(error);
+          });
 
         return res.status(201).json({
           status: 201,
-          msg: 'Usuario creado satisfactoriamente!. Verifique su email :)'
+          msg: 'Usuario creado satisfactoriamente!. Verifique su email :)',
+          token
         });
       } else {
         return res.status(400).json({
@@ -57,10 +77,10 @@ module.exports = {
 
         const userForToken = {
           id: user.id,
-          name: user.name
+          email: user.email
         };
 
-        const token = jwt.sign(userForToken, process.env.SECRET, {
+        const token = jwt.sign(userForToken, process.env.SECRETKEY, {
           expiresIn: '10h'
         });
 
