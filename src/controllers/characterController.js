@@ -20,6 +20,7 @@ module.exports = {
           total: data.length,
           data: data,
         };
+        console.log(respuesta);
         res.status(200).json(respuesta);
       })
       .catch((err) => {

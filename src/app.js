@@ -14,7 +14,7 @@ const authRouter = require("./routes/authRouter");
 const charactersRouter = require("./routes/charactersRouter");
 const moviesRouter = require('./routes/moviesRouter');
 const genresRouter = require('./routes/genresRouter');
-const tokenVerify = require("./middlewares/tokenMiddlware");
+const security = require("./middlewares/tokenMiddlware");
 
 
 // view engine setup
@@ -31,7 +31,8 @@ app.use(express.static(path.join(__dirname, "images")));
 
 
 app.use("/auth", authRouter);
-app.use(tokenVerify);
+app.use(security.tokenVerify);
+console.log(security.tokenVerify);
 app.use("/users", usersRouter);
 app.use("/characters", charactersRouter);
 app.use("/movies", moviesRouter);
