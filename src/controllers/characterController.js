@@ -15,6 +15,7 @@ module.exports = {
       attributes: ["id", "name", "image"],
     })
       .then((data) => {
+        console.log(data);
         let respuesta = {
           status: 200,
           total: data.length,
@@ -38,7 +39,7 @@ module.exports = {
        console.log(data)
         let respuesta = {
           status: 200,
-          url: getURLBase(req) +`detail/${data.id}`,
+          url: getURLBase(req) +`${data.id}`,
           length: data.length,
           data: data,
         };
@@ -80,7 +81,6 @@ module.exports = {
       })
       let respuesta = {
         status: 200,
-       /*  url: getURLBase(req) + `detail/${actor.id}`, */
         length: actor.length,
         data: actor,
       };

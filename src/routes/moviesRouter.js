@@ -9,6 +9,7 @@ let moviesValidator=require("../validations/MovieValidator")
 let moviesController = require("../controllers/moviesControllers");
 
 //LIST, DETAIL AND SEARCH
+//RUTE: /movies
 router.get("/search", moviesController.search);
 router.get("/", moviesController.list);
 router.get("/:id", moviesController.detail);

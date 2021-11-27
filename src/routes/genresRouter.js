@@ -8,6 +8,8 @@ const genresController = require("../controllers/genresController");
 //Validations
 const genresValidator = require("../validations/genresValidator");
 
+//ruta: /genres
+
 router.get("/", genresController.list);
 
 router.get("/:id", genresController.detail);

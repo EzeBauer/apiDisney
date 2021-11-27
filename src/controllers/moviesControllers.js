@@ -5,7 +5,7 @@ const { validationResult } = require("express-validator");
 module.exports = {
   //MOVIES LIST
   list: (req, res) => {
-    console.log(req.query);
+  /*   console.log(req.query);
     let query;
     if (req.query.title) {
       query = "title";
@@ -13,21 +13,21 @@ module.exports = {
       query = "genreId";
     } else {
       query = "title";
-    }
+    } */
     try {
       db.Movie.findAll({
-        attributes: ["id", "title", "image", "releaseDate"],
+        attributes: ["id", "title", /* "image", */ "releaseDate"],
         include: [
-          { association: "genre", attributes: ["id", "name", "image"] },
-        ],
-        where: {
+          { association: "genre", attributes: ["id", "name"/* , "image" */] },
+        ]
+       /*  where: {
           title: {
             [Op.substring]: req.query.title ? req.query.title : "",
           },
           genreId: {
             [Op.substring]: req.query.genre ? req.query.genre : "",
           },
-        },
+        }, 
         order: [
           [
             query,
@@ -35,12 +35,13 @@ module.exports = {
               ? req.query.order
               : "ASC",
           ],
-        ],
+        ],*/
       }).then((data) => {
+        console.log(data);
         let respuesta = {
           status: 200,
           length: data.length,
-          url: getURLBase(req),
+         /*  url: getURLBase(req), */
           data: data,
         };
         res.status(200).json(respuesta);
@@ -112,20 +113,7 @@ module.exports = {
         ],
       })
         .then((movie) => {
-          /* movie.dataValues.idGenre = undefined;
-        movie.dataValues.genres.dataValues.id = undefined;
-        movie.dataValues.genres.dataValues.imagen = undefined;
-        movie.dataValues.updatedAt = undefined;
-        movie.dataValues.characters.forEach((character) => {
-          character.dataValues.MovieCharacter = undefined;
-        });
-
-        console.log();
-
-        return res.status(200).json({
-          status: 200,
-          data: movie,
-        }); */
+          
           let respuesta = {
             status: 200,
             url: getURLBase(req) + `detail/${data.id}`,

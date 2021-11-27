@@ -16,12 +16,12 @@ const upload = require("../middlewares/multerCharacters");
 /* /characters */
 router
 .get("/", list)
-
+.get("/search", search)
 .get("/:id", detail)
 
 
 .post("/create", upload.single("image"), validCharacters, create)
-.put("/edit/:id", upload.single("image"), validCharacters, edit)
+.put("/:id", upload.single("image"), validCharacters, edit)
 .delete("/delete/:id", destroy);
 
 module.exports = router;

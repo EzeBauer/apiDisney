@@ -30,7 +30,7 @@ module.exports = [
     .isFloat({ min: 1.0, max: 5.0 })
     .withMessage("Este campo solo acepta numeros decimales ej: 4.0"),
 
-  body("idGenre")
+  body("genreId")
     .notEmpty()
     .withMessage("Es necesario asociar un genero a la pelicula!.")
     .isInt()
