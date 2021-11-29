@@ -39,7 +39,7 @@ module.exports = {
           to: user.email, // Change to your recipient
           from: "bauereze@gmail.com", // Change to your verified sender
           subject: "Bienvenido a la apiDIsney",
-          text: "",
+          text: "Te damos la Bienvenida a nuestra api, en donde podras explorar los actores y peliculas del mundo Disney. Por favor, tene en cuenta que para utilizar los enpoints deberas ingresar en authotization, Barer tu token de usuario",
           html: "<strong>and easy to do anywhere, even with Node.js</strong>",
         };
         sgMail
