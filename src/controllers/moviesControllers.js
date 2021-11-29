@@ -6,7 +6,7 @@ const fs = require("fs");
 
 module.exports = {
    //MOVIES LIST
-  list: (req, res) => {
+  /* list: (req, res) => {
   
     try {
       db.Movie.findAll({
@@ -31,7 +31,52 @@ module.exports = {
       };
       res.status(500).json(errorBD);
     }
-  },
+  }, */
+  list: (req, res) => {
+    console.log(req.query);
+    let query;
+    if (req.query.title) {
+        query = "title"
+    } else if (req.query.genre) {
+        query = "genreId"
+    } else {
+        query = "title"
+    }
+    try {
+        db.Movie.findAll({
+            attributes: ["id", "title", "image", "releaseDate"],
+            include: [
+                { association: "genre", attributes: ["id", "name", "image"] }
+            ],
+            where: {
+                title: {
+                    [Op.substring]: req.query.title ? req.query.title : "",
+                },
+                genreId: {
+                    [Op.substring]: req.query.genre ? req.query.genre : "",
+                },
+
+            },
+            order: [
+                [query, req.query.order && req.query.order.toUpperCase() !== "ASC" ? req.query.order : "ASC"]
+            ]
+        }).then((data) => {
+            let respuesta = {
+                status: 200,
+                length: data.length,
+                url:getURLBase(req),
+                data: data,
+            };
+            res.status(200).json(respuesta);
+        });
+    } catch (error) {
+        let errorBD = {
+            status: 500,
+            msg: "Error Interno del Servidor",
+        };
+        res.status(500).json(errorBD);
+    }
+},
  
 
   //SEARCH MOVIES BY PARAMETERS
@@ -42,7 +87,7 @@ module.exports = {
       where: {
         title: { [Op.substring]: req.query.title },
       },
-      /*  order: [["title", req.query.order ? req.query.order : "ASC"]], */
+     
       attributes: ["id", "title", "image", "createdAt", "genreId"],
     });
        let genres = db.Genre.findAll({

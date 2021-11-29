@@ -4,7 +4,7 @@ const router = express.Router();
 const {
   list,
   detail,
-  search,
+ /*  search, */
   create,
   edit,
   destroy,
@@ -16,12 +16,12 @@ const upload = require("../middlewares/multerCharacters");
 /* /characters */
 router
 .get("/", list)
-.get("/search", search)
+/* .get("/search", search) */
 .get("/:id", detail)
 
 
-.post("/create", upload.single("image"), validCharacters, create)
+.post("/", upload.single("image"), validCharacters, create)
 .put("/:id", upload.single("image"), validCharacters, edit)
-.delete("/delete/:id", destroy);
+.delete("/:id", destroy);
 
 module.exports = router;

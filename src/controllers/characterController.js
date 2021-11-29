@@ -10,7 +10,7 @@ const fs = require("fs");
 //Dentro del actorsAPIController uso las dos forma de poder llamar a nuestros modelo
 //----------------------------------
 module.exports = {
-  list: (req, res) => {
+/*   list: (req, res) => {
     db.Character.findAll({
       attributes: ["id", "name", "image"],
     })
@@ -28,6 +28,60 @@ module.exports = {
         console.log(err), res.status(500).json(err);
       });
   },
+ */
+  
+  list: (req, res) => {
+    console.log(req.query);
+    let query;
+    if (req.query.name) {
+        query = "name"
+    } else if (req.query.age) {
+        query = "age"
+    } else if (req.query.weight) {
+        query = "weight"
+    } else {
+        query = "name"
+    }
+
+
+    try {
+        db.Character.findAll({
+            attributes: ["id", "name", "image", "history", "age"],
+            where: {
+                name: {
+                    [Op.substring]: req.query.name ? req.query.name : "",
+                },
+                age: {
+                    [Op.substring]: req.query.age ? req.query.age : "",
+                },
+                weight: {
+                    [Op.substring]: req.query.weight ? req.query.weight : "",
+                },
+            },
+            include: req.query && req.query.name || req.query.age || req.query.weight ? [
+                { association: "movies", attributes: ["id", "title", "image"] }
+            ] : null,
+            order: [
+                [query, req.query.order && req.query.order.toUpperCase() !== "ASC" ? req.query.order : "ASC"]
+            ]
+        }).then((data) => {
+            let respuesta = {
+                status: 200,
+                length: data.length,
+                data: data,
+          
+            };
+            res.status(200).json(respuesta);
+        });
+    } catch (error) {
+        let errorBD = {
+            status: 500,
+            msg: "Error Interno del Servidor",
+        };
+        res.status(500).json(errorBD);
+    }
+},
+
 
   detail: (req, res) => {
     db.Character.findByPk(req.params.id, {
@@ -59,7 +113,7 @@ module.exports = {
       });
   },
   //FILTERS
-  search: async (req, res) => {
+  /* search: async (req, res) => {
     console.log(req.query);
     try {
      let actor= await db.Character.findAll({
@@ -94,7 +148,7 @@ module.exports = {
     }
    
         
-  },
+  }, */
 
   create: (req, res) => {
      let errores = validationResult(req); 

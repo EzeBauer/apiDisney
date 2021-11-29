@@ -35,7 +35,26 @@ let characters = [
     history: "Kelly Marie Tran es una actriz estadounidense. Ha tenido varios papeles en cortometrajes y episodios de distintas series de televisión, y es principalmente conocida por su participación en Star Wars: Episodio VIII - Los últimos Jedi, como Rose Tico y ser la voz de Raya en Raya y el último dragón",
     createdAt: new Date,
     updatedAt:  new Date
-  }
+  },
+  {
+    name: "John Christopher Depp",
+    image: "Johnny Deep.jpg",
+    age: 58,
+    weight: 78,
+    history: "John Christopher Depp II (Owensboro, Kentucky; 9 de junio de 1963) es un actor, productor, guionista y músico estadounidense. Ha sido nominado en tres ocasiones al Óscar y recibió un Globo de Oro,1​ un premio del Sindicato de Actores y un César ",
+    createdAt: new Date,
+    updatedAt:  new Date
+  },
+  {
+  name: "Orlando Bloom",
+  image: "Orlando Bloom.jpg",
+  age: 44,
+  weight: 72,
+  history: "Orlando Jonathan Blanchard Bloom, conocido habitualmente como Orlando Bloom, es un actor británico",
+  createdAt: new Date,
+  updatedAt:  new Date
+}
+
 ]
 module.exports = {
   up: async (queryInterface, Sequelize) => {

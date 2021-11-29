@@ -44,6 +44,15 @@ let movies = [
     genreId:3,
     createdAt: new Date,
     updatedAt:  new Date
+  },
+  {
+    title : "Piratas del Caribe",
+    image:"Piratas_del_Caribe.jpg",
+    releaseDate:"2019/07/30",
+    rating:5,
+    genreId:3,
+    createdAt: new Date,
+    updatedAt:  new Date
   }
 ]
 module.exports = {

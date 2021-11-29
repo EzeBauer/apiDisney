@@ -29,6 +29,18 @@ let charactersMovie = [
     movieId: 3,
     createdAt: new Date,
     updatedAt:  new Date
+  },
+  {
+    characterId: 5,
+    movieId: 6,
+    createdAt: new Date,
+    updatedAt:  new Date
+  },
+  {
+    characterId: 6,
+    movieId: 6,
+    createdAt: new Date,
+    updatedAt:  new Date
   }
 ]
 module.exports = {
