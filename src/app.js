@@ -32,7 +32,6 @@ app.use(cookieParser());
 
 app.use("/auth", authRouter);
 app.use(security.tokenVerify);
-console.log(security.tokenVerify);
 app.use("/users", usersRouter);
 app.use("/characters", charactersRouter);
 app.use("/movies", moviesRouter);

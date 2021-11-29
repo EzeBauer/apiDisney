@@ -5,7 +5,9 @@ const tokenVerify = (req, res, next) => {
     /* Obtiene el valor de la propiedad authorization */
     const authorization = req.get("authorization");
     if (!authorization) {
-      console.log(error);
+       return res
+         .status(401)
+         .json({ error: "Falta token de autenticación o es invalido" });
     }
     //Separa bearer de el token
     let token = authorization.split(" ")[1];
