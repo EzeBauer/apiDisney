@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
     image: DataTypes.STRING(100),
     name: DataTypes.STRING(50),
     age: DataTypes.INTEGER,
-    weight: DataTypes.DECIMAL(4, 2),
+    weight: DataTypes.DECIMAL(5, 3),
     history: DataTypes.STRING(500)
   }, {
     sequelize,

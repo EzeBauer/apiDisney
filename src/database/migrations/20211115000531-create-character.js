@@ -22,7 +22,7 @@ module.exports = {
       },
       weight: {
         allowNull: false,
-        type: Sequelize.DECIMAL(4, 2),
+        type: Sequelize.DECIMAL(5, 3),
       },
       history: {
         allowNull: false,
