@@ -4,6 +4,7 @@ var router = express.Router();
 //Middlewares & validations
 const userUpdateValidator = require("../validations/userUpdateValidator");
 
+
 //Controllers
 const usersController = require("../controllers/usersController");
 

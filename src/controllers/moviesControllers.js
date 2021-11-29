@@ -1,47 +1,25 @@
 const db = require("../database/models");
 const { Op } = require("sequelize");
 const { validationResult } = require("express-validator");
+const getURLBase = (req) => `${req.protocol}://${req.get("host")}/movies`;
+const fs = require("fs");
 
 module.exports = {
-  //MOVIES LIST
+   //MOVIES LIST
   list: (req, res) => {
-  /*   console.log(req.query);
-    let query;
-    if (req.query.title) {
-      query = "title";
-    } else if (req.query.genre) {
-      query = "genreId";
-    } else {
-      query = "title";
-    } */
+  
     try {
       db.Movie.findAll({
-        attributes: ["id", "title", /* "image", */ "releaseDate"],
+        attributes: ["id", "title", "image", "releaseDate"],
         include: [
-          { association: "genre", attributes: ["id", "name"/* , "image" */] },
+          { association: "genre", attributes: ["id", "name", "image"] },
         ]
-       /*  where: {
-          title: {
-            [Op.substring]: req.query.title ? req.query.title : "",
-          },
-          genreId: {
-            [Op.substring]: req.query.genre ? req.query.genre : "",
-          },
-        }, 
-        order: [
-          [
-            query,
-            req.query.order && req.query.order.toUpperCase() !== "ASC"
-              ? req.query.order
-              : "ASC",
-          ],
-        ],*/
-      }).then((data) => {
+        }).then((data) => {
         console.log(data);
         let respuesta = {
           status: 200,
           length: data.length,
-         /*  url: getURLBase(req), */
+          url: getURLBase(req),
           data: data,
         };
         res.status(200).json(respuesta);
@@ -53,48 +31,40 @@ module.exports = {
       };
       res.status(500).json(errorBD);
     }
-    /*  db.Movie.findAll({ attributes: ["id", "title", "image", "createdAt"] })
-      .then((movies) => {
-        movies.forEach((movie) => {
-          movie.dataValues.detail = `${req.protocol}://${req.get(
-            "host"
-          )}/movies/${movie.id}`;
-          movie.dataValues.id = undefined;
-        });
-        return res.status(200).json({
-          status: 200,
-          total: movies.length,
-          movies,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
-      }); */
   },
+ 
 
   //SEARCH MOVIES BY PARAMETERS
   search: (req, res) => {
-    db.Movie.findAll({
-      where: {
-        title: { [Op.substring]: req.query.name },
-        idGenre: { [Op.substring]: req.query.genre },
-      },
-      order: [["title", req.query.order ? req.query.order : "ASC"]],
-      attributes: ["id", "title", "image", "createdAt"],
-    })
-      .then((movies) => {
-        movies.forEach((movie) => {
-          movie.dataValues.detail = `${req.protocol}://${req.get(
-            "host"
-          )}/movies/${movie.id}`;
-          movie.dataValues.id = undefined;
-        });
+    let movies = db.Movie.findAll({
+      include: [{ association: "genre", attributes: ["id", "name", "image"] }],
 
+      where: {
+        title: { [Op.substring]: req.query.title },
+      },
+      /*  order: [["title", req.query.order ? req.query.order : "ASC"]], */
+      attributes: ["id", "title", "image", "createdAt", "genreId"],
+    });
+       let genres = db.Genre.findAll({
+      include: [{ association: "movies" }],
+      where: {
+        name: { [Op.substring]: req.query.genre },
+      },
+    });
+ 
+   
+    Promise.all([movies, genres])
+      .then(([movies, genres]) => {
+              
         return res.status(200).json({
           status: 200,
-          total: movies.length ? movies.length : "No hay peliculas que mostrar",
+          total:
+            movies.length || genres.length
+              ? movies.length || genres.length
+              : "No hay peliculas que mostrar",
+            
           movies,
+          genres,
         });
       })
       .catch((err) => {
@@ -108,15 +78,14 @@ module.exports = {
     try {
       db.Movie.findByPk(req.params.id, {
         include: [
-          { association: "characters", attributes: ["id", "name", "image"] },
+          { association: "characters", attributes: ["id", "image", "name"] },
           { association: "genre", attributes: ["id", "name", "image"] },
         ],
       })
         .then((movie) => {
-          
           let respuesta = {
             status: 200,
-            url: getURLBase(req) + `detail/${data.id}`,
+            url: getURLBase(req) + `/${movie.id}`,
             data: movie,
           };
           res.status(200).json(respuesta);
@@ -249,98 +218,57 @@ module.exports = {
     }
   },
 
-  /* (req, res) => {
-    const { title, rating, idGenre } = req.body;
-
-    db.Movie.findByPk(req.params.id)
-      .then((movie) => {
-        db.Movie.update(
-          {
-            title: title ? title : movie.title,
-            image: req.file ? req.file.filename : movie.image,
-            rating: +rating ? rating : movie.rating,
-            idGenre: +idGenre ? idGenre : movie.idGenre,
-          },
-          { where: { id: req.params.id } }
-        )
-          .then(() => {
-            return res.status(200).json({
-              status: 200,
-              msg: "Pelicula actualizada satisfactoriamente!.",
-            });
-          })
-          .catch((err) => {
-            console.log(err);
-            return res.status(500).json(err);
-          });
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
-      });
-  }, */
-
   //DELETE
-  delete:async (req, res) => {
-        try {
-            let movie = await db.Movie.findByPk(+req.params.id).then((movie) => movie.dataValues);
-            db.Movie.destroy({
-                where: { id: +req.params.id },
-            }).then(() => {
-                let imgABorrar = path.join(
-                    __dirname,
-                    "../images/movies/" + movie.image
-                );
-                fs.unlinkSync(imgABorrar);
-                let respuesta = {
-                    status: 200,
-                    msg: "Recurso eliminado con éxito",
-                };
-                res.status(200).json(respuesta);
-            }).catch(e => {
-                let error = {
-                    status: 404,
-                    msg: "Recurso no encontrado",
-                };
-                res.status(500).json(error);
-            })
-        } catch (err) {
-            let error = {
-                status: 500,
-                msg: "Error interno del servidor",
-            };
-            res.status(500).json(error);
-
-        }
-
-    },
-  
-  
-  /* (req, res) => {
-    db.Movie.destroy({ where: { id: req.params.id } })
-      .then(() => {
-        res.status(200).json({
-          status: 200,
-          msg: "Pelicula eliminada satisfactoriamente!",
+  delete: async (req, res) => {
+    try {
+      let movie= await db.Movie.findByPk(+req.params.id)
+      .then((movie) => {
+        console.log(movie.image);
+          /*  if (movie.image!== null) {
+             let imgABorrar = path.join(
+               __dirname,
+               `../images/movies/${movie.image}`
+             );
+             
+             fs.unlinkSync(imgABorrar);
+           } */
+          
+           movie.destroy();
+    
+          let respuesta = {
+            status: 200,
+            msg: "Pelicula eliminada con éxito",
+          };
+          return res.status(200).json(respuesta);
+        })
+        .catch((e) => {
+          let error = {
+            status: 404,
+            msg: "Pelicula no encontrado",
+          };
+          res.status(500).json(error);
         });
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.json(err);
-      }); 
-  },*/
-
+    } catch (err) {
+      let error = {
+        status: 500,
+        msg: "Error interno del servidor",
+      };
+      res.status(500).json(error);
+    }
+  },
+    
   //CRUD FINISH
 
   //ASSOCIATE MOVIES OR CHARACTERS
   associate: (req, res) => {
-    const { idCharacter, idMovie } = req.body;
+    const { characterId, movieId } = req.body;
     db.characterMovie
       .create({
-        characterId: characterId,
-        movieId: movieId,
+        characterId: +characterId,
+        movieId: +movieId,
       })
-      .then(() => {
+      .then((data) => {
+        console.log(data);
         res.status(200).json({
           status: 200,
           msg: "Pelicula y personaje asociados!",

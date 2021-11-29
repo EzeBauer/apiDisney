@@ -15,13 +15,13 @@ module.exports = {
       attributes: ["id", "name", "image"],
     })
       .then((data) => {
-        console.log(data);
+      
         let respuesta = {
           status: 200,
           total: data.length,
           data: data,
         };
-        console.log(respuesta);
+        
         res.status(200).json(respuesta);
       })
       .catch((err) => {
@@ -36,7 +36,7 @@ module.exports = {
       ],
     })
       .then((data) => {
-       console.log(data)
+      
         let respuesta = {
           status: 200,
           url: getURLBase(req) +`${data.id}`,
@@ -110,7 +110,7 @@ module.exports = {
         weight: +weight,
         history: history,
         }).then((actor) => {
-         console.log(actor)
+        
           let respuesta = {
             status: 201,
             msg: "Personaje creado con éxito!",

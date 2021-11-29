@@ -25,7 +25,6 @@ module.exports = {
           .then((data) => {
             let respuesta = {
               status: 200,
-              /* url: getURLBase(req) + `detail/${data.id}`, */
               data: data,
             };
             res.status(200).json(respuesta);
@@ -45,32 +44,6 @@ module.exports = {
         res.status(404).json(errorBD);
       }
 
-    /* db.Genre.findByPk(req.params.id, {
-      include: [{ association: "movies" }],
-      attributes: ["id", "name", ["imagen", "image"]],
-    })
-      .then((genre) => {
-        genre.dataValues.movies.forEach((movie) => {
-          movie.dataValues.detail = `${req.protocol}://${req.get(
-            "host"
-          )}/character/${movie.id}`;
-          movie.dataValues.id = undefined;
-          movie.dataValues.image = undefined;
-          movie.dataValues.rating = undefined;
-          movie.dataValues.idGenre = undefined;
-          movie.dataValues.createdAt = undefined;
-          movie.dataValues.updatedAt = undefined;
-        });
-
-        return res.status(200).json({
-          status: 200,
-          data: genre,
-        });
-      })
-      .catch((err) => {
-        console.log(err);
-        return res.status(500).json(err);
-      }); */
   },
   create: (req, res) => {
     const errors = validationResult(req);
